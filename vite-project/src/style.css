@@ -28,3 +28,15 @@ button {
   margin-top: 10px;
   font-weight: bold;
 }
+
+/* Estilos para etiquetas 2D sobre objetos (CSS2DRenderer) */
+.label {
+  background: rgba(0,0,0,0.75);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  pointer-events: none;
+}

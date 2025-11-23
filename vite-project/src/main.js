@@ -1,6 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 
 // Símbolos de la cinta
 const BLANK = 'B'  // Blanco (vacío)
@@ -160,7 +161,28 @@ class TuringMachine {
       }
     }
 
+    // --- Protoboard (placa) detrás sobre la mesa ---
+    // Rectángulo bajo, no muy alto; colocado hacia la parte trasera (z mayor)
+    const protoboard = new THREE.Mesh(
+      new THREE.BoxGeometry(6, 0.6, 8), 
+      new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 30 }) 
+    )
+    // Posicionar centrado en X, ligeramente por encima de la superficie de la mesa en Y,
+    // y hacia atrás en Z (detrás del soporte central). Ajusta valores si quieres moverla.
+    protoboard.position.set(-7, 3.8, 11.5)
+    baseGroup.add(protoboard)
+    // Guardar referencia para etiquetas/interacción
+    this.protoboard = protoboard
+
     this.scene.add(baseGroup)
+
+    const arduino = new THREE.Mesh(
+      new THREE.BoxGeometry(5.5, 1.5, 4), // ancho X, altura Y, profundidad Z
+      new THREE.MeshPhongMaterial({ color: 0x27A6F5, shininess: 50 })
+    )
+    this.arduino = arduino
+    arduino.position.set(-7, 3.8, 5.5)
+    baseGroup.add(arduino)
   }
 
   
@@ -633,6 +655,77 @@ scene.add(directionalLight)
 
 const turingMachine = new TuringMachine(scene)
 
+// --- Etiquetas 2D (HTML) y hover ---
+const labelRenderer = new CSS2DRenderer()
+labelRenderer.setSize(window.innerWidth, window.innerHeight)
+labelRenderer.domElement.style.position = 'absolute'
+labelRenderer.domElement.style.top = '0px'
+labelRenderer.domElement.style.pointerEvents = 'none' // que no bloquee los eventos del canvas
+document.querySelector('#app').appendChild(labelRenderer.domElement)
+
+const raycaster = new THREE.Raycaster()
+const mouse = new THREE.Vector2()
+let currentHover = null
+
+function createLabel(targetObject, text, yOffset = 1.5) {
+  const div = document.createElement('div')
+  div.className = 'label'
+  div.textContent = text
+  div.style.display = 'none' // oculto por defecto
+
+  const labelObj = new CSS2DObject(div)
+  labelObj.position.set(0, yOffset, 0)
+  targetObject.add(labelObj)
+  return { div, labelObj }
+}
+
+// Crear etiquetas para objetos clave (si existen)
+const labels = {}
+if (turingMachine.protoboard) labels.protoboard = createLabel(turingMachine.protoboard, 'Protoboard')
+if (turingMachine.leftMotor) labels.leftMotor = createLabel(turingMachine.leftMotor, 'Motor izquierdo')
+if (turingMachine.rightMotor) labels.rightMotor = createLabel(turingMachine.rightMotor, 'Motor derecho')
+if (turingMachine.head) labels.head = createLabel(turingMachine.head, 'Cabezal \n TCS35725', 2.2)
+if (turingMachine.writerArm) labels.writerArm = createLabel(turingMachine.writerArm, 'Brazo de escritura', 2.2)
+if (turingMachine.eraserPiston) labels.eraserPiston = createLabel(turingMachine.eraserPiston, 'Pistón de borrado', 2.2)
+if (turingMachine.arduino) labels.arduino = createLabel(turingMachine.arduino, 'Arduino', 1.5)
+
+// 
+function onPointerMove(event) {
+  const rect = renderer.domElement.getBoundingClientRect()
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
+
+  raycaster.setFromCamera(mouse, camera)
+  const interactive = []
+  if (turingMachine.protoboard) interactive.push(turingMachine.protoboard)
+  if (turingMachine.leftMotor) interactive.push(turingMachine.leftMotor)
+  if (turingMachine.rightMotor) interactive.push(turingMachine.rightMotor)
+  if (turingMachine.head) interactive.push(turingMachine.head)
+
+  const intersects = raycaster.intersectObjects(interactive, true)
+  if (intersects.length > 0) {
+    const found = intersects[0].object // mesh intersectado
+    // encontrar cuál de los objetos principales contiene el mesh intersectado
+    let owner = null
+    if (turingMachine.head && (found === turingMachine.head || turingMachine.head.children.includes(found))) owner = 'head'
+    else if (turingMachine.leftMotor && (found === turingMachine.leftMotor || turingMachine.leftMotor.children.includes(found))) owner = 'leftMotor'
+    else if (turingMachine.rightMotor && (found === turingMachine.rightMotor || turingMachine.rightMotor.children.includes(found))) owner = 'rightMotor'
+    else if (turingMachine.protoboard && (found === turingMachine.protoboard || turingMachine.protoboard.children.includes(found))) owner = 'protoboard'
+
+    if (owner && currentHover !== owner) {
+      // ocultar anterior
+      if (currentHover && labels[currentHover]) labels[currentHover].div.style.display = 'none'
+      currentHover = owner
+      if (labels[owner]) labels[owner].div.style.display = 'block'
+    }
+  } else {
+    if (currentHover && labels[currentHover]) labels[currentHover].div.style.display = 'none'
+    currentHover = null
+  }
+}
+
+window.addEventListener('pointermove', onPointerMove)
+
 // Event Listeners
 document.getElementById('suma').addEventListener('click', async () => {
   const num1 = parseInt(document.getElementById('num1').value) || 0
@@ -660,6 +753,8 @@ function animate() {
   requestAnimationFrame(animate)
   controls.update()
   renderer.render(scene, camera)
+  // Renderizar etiquetas HTML 2D
+  if (typeof labelRenderer !== 'undefined') labelRenderer.render(scene, camera)
 }
 
 animate()
