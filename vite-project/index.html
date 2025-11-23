@@ -1,12 +1,25 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>vite-project</title>
+    <title>Máquina de Turing</title>
   </head>
   <body>
+    <div id="controls">
+      <h1>Máquina de Turing - Suma y Resta</h1>
+      <div>
+        <label>Número 1: <input type="number" id="num1" value="3" min="0"></label>
+        <label>Número 2: <input type="number" id="num2" value="2" min="0"></label>
+      </div>
+      <div>
+        <button id="suma">Ejecutar Suma</button>
+        <button id="resta">Ejecutar Resta</button>
+        <button id="reset">Reset</button>
+      </div>
+      <div id="estado">Estado: Listo</div>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>
