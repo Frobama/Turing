@@ -134,7 +134,7 @@ class TuringMachine {
     const baseGroup = new THREE.Group();
 
     const base = new THREE.Mesh(
-      new THREE.BoxGeometry(45, 2, 15),
+      new THREE.BoxGeometry(40, 2, 15),
       new THREE.MeshPhongMaterial({ color: 0x654321 })      
     )
     base.position.z = 9.16
@@ -148,7 +148,7 @@ class TuringMachine {
     writerSupport.position.set(-1.5, 6, 3.16)
     baseGroup.add(writerSupport)
 
-    const positionsX = [21.5, -21.5]
+    const positionsX = [19, -19]
     const positionsZ = [2.65, 15.65]
     for (let i = 0; i < 2; i++) {
       for (let j = 0; j < 2; j++) {
@@ -161,10 +161,21 @@ class TuringMachine {
       }
     }
 
+    const servo1 = this.createServoMotor();
+    servo1.rotation.y = Math.PI ;
+    servo1.rotation.x = - Math.PI / 2;
+    servo1.position.set(21,0,2.65);
+    baseGroup.add(servo1);
+    const servo2 = this.createServoMotor();
+    servo2.rotation.y = Math.PI ;
+    servo2.rotation.x = - Math.PI / 2;
+    servo2.position.set(-21,0,2.65);
+    baseGroup.add(servo2);
+
     // --- Protoboard (placa) detrás sobre la mesa ---
     // Rectángulo bajo, no muy alto; colocado hacia la parte trasera (z mayor)
     const protoboard = new THREE.Mesh(
-      new THREE.BoxGeometry(6, 0.6, 8), 
+      new THREE.BoxGeometry(8, 0.6, 6), 
       new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 30 }) 
     )
     // Posicionar centrado en X, ligeramente por encima de la superficie de la mesa en Y,
@@ -176,16 +187,137 @@ class TuringMachine {
 
     this.scene.add(baseGroup)
 
-    const arduino = new THREE.Mesh(
-      new THREE.BoxGeometry(5.5, 1.5, 4), // ancho X, altura Y, profundidad Z
-      new THREE.MeshPhongMaterial({ color: 0x27A6F5, shininess: 50 })
+    // Arduino UNO
+    const arduinoGroup = new THREE.Group()
+    
+    // PCB principal (placa azul característica del Arduino UNO)
+    const pcb = new THREE.Mesh(
+      new THREE.BoxGeometry(6.8, 0.2, 5.3),
+      new THREE.MeshPhongMaterial({ color: 0x006699, shininess: 30 })
     )
-    this.arduino = arduino
-    arduino.position.set(-7, 3.8, 5.5)
-    baseGroup.add(arduino)
+    arduinoGroup.add(pcb)
+    
+    // Puerto USB (conector plateado) - movido cerca del power jack
+    const usb = new THREE.Mesh(
+      new THREE.BoxGeometry(1.5, 0.6, 1.2),
+      new THREE.MeshPhongMaterial({ color: 0xc0c0c0 })
+    )
+    usb.position.set(-3.2, 0.4, 0)
+    arduinoGroup.add(usb)
+    
+    // Conector de alimentación (cilindro negro) - junto al USB
+    const powerJack = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.4, 0.4, 0.8, 16),
+      new THREE.MeshPhongMaterial({ color: 0x000000 })
+    )
+    powerJack.rotation.z = Math.PI / 2
+    powerJack.position.set(-3, 0.4, 1.2)
+    arduinoGroup.add(powerJack)
+    
+    // Microcontrolador ATmega328 (chip negro cuadrado grande)
+    const atmega = new THREE.Mesh(
+      new THREE.BoxGeometry(0.8, 0.3, 0.8),
+      new THREE.MeshPhongMaterial({ color: 0x1a1a1a })
+    )
+    atmega.position.set(0.5, 0.25, 0.5)
+    arduinoGroup.add(atmega)
+    
+    // Pines header (filas de conectores) - en la orilla opuesta (z positivo)
+    const pinMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 })
+    
+    // Fila de pines izquierda
+    const leftPins = new THREE.Mesh(
+      new THREE.BoxGeometry(6,0.3, 0.4),
+      pinMaterial
+    )
+    leftPins.position.set(0, 0.3, -2.0)
+    arduinoGroup.add(leftPins)
+    
+    // Fila de pines derecha
+    const rightPins = new THREE.Mesh(
+      new THREE.BoxGeometry(6,0.3, 0.4),
+      pinMaterial
+    )
+    rightPins.position.set(0, 0.3, 2.0)
+    arduinoGroup.add(rightPins)
+    
+    // LED de encendido (verde)
+    const powerLED = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2, 0.15, 1),
+      new THREE.MeshPhongMaterial({ color: 0x00ff00, emissive: 0x003300 })
+    )
+    powerLED.position.set(-1.5, 0.2, -1.8)
+    arduinoGroup.add(powerLED)
+    
+    arduinoGroup.position.set(-7, 3.8, 5.5)
+    baseGroup.add(arduinoGroup)
+    this.arduino = arduinoGroup
   }
 
-  
+  createServoMotor() {
+    // Crear un modelo de servomotor estilo SG90 o similar
+    const servoGroup = new THREE.Group()
+    
+    // Cuerpo principal del servo (caja azul característica)
+    const body = new THREE.Mesh(
+      new THREE.BoxGeometry(2.3, 1.2, 2.2),
+      new THREE.MeshPhongMaterial({ color: 0x1a5490, shininess: 40 })
+    )
+    servoGroup.add(body)
+    
+    // Tapa superior con tornillos (parte gris/plateada)
+    const topCap = new THREE.Mesh(
+      new THREE.BoxGeometry(2.5, 0.2, 2.4),
+      new THREE.MeshPhongMaterial({ color: 0xa0a0a0 })
+    )
+    topCap.position.y = 0.7
+    servoGroup.add(topCap)
+    
+    // Orejetas de montaje (laterales con agujeros)
+    const mountingEar1 = new THREE.Mesh(
+      new THREE.BoxGeometry(0.3, 0.2, 2.4),
+      new THREE.MeshPhongMaterial({ color: 0xa0a0a0 })
+    )
+    mountingEar1.position.set(-1.3, 0, 0)
+    servoGroup.add(mountingEar1)
+    
+    const mountingEar2 = new THREE.Mesh(
+      new THREE.BoxGeometry(0.3, 0.2, 2.4),
+      new THREE.MeshPhongMaterial({ color: 0xa0a0a0 })
+    )
+    mountingEar2.position.set(1.3, 0, 0)
+    servoGroup.add(mountingEar2)
+    
+    // Eje de salida (cilindro blanco que sobresale)
+    const outputShaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.25, 0.25, 0.6, 16),
+      new THREE.MeshPhongMaterial({ color: 0xffffff })
+    )
+    outputShaft.position.y = 0.9
+    servoGroup.add(outputShaft)
+    
+    // Cables de conexión (3 cables pequeños)
+    const cableColors = [0xff6600, 0xff0000, 0x8b4513] // Naranja, Rojo, Marrón
+    for (let i = 0; i < 3; i++) {
+      const cable = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.08, 1.5, 8),
+        new THREE.MeshPhongMaterial({ color: cableColors[i] })
+      )
+      cable.rotation.x = Math.PI / 2
+      cable.position.set(-0.4 + i * 0.4, -0.3, -1.8)
+      servoGroup.add(cable)
+    }
+    
+    // Etiqueta/sticker en el frente
+    const label = new THREE.Mesh(
+      new THREE.BoxGeometry(1.8, 0.6, 0.05),
+      new THREE.MeshPhongMaterial({ color: 0xffffff })
+    )
+    label.position.set(0, 0.2, 1.125)
+    servoGroup.add(label)
+    
+    return servoGroup
+  }
   
   createMotors() {
     // SERVOMOTOR Y CARRETE IZQUIERDO (centro en -halfStraight, 0)
