@@ -40,3 +40,33 @@ button {
   transform: translateY(-50%);
   pointer-events: none;
 }
+
+.buttonContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+button {
+  background-color: white;
+  border-radius: 7px;
+  border-width: 1px;
+}
+input[type="number"] {
+  border-radius: 7px;
+  border-width: 1px;
+  padding: 5px;
+}
+
+.labelContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: start; 
+  gap: 2px;
+}
+
+.stateOutput {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
