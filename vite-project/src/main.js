@@ -148,6 +148,14 @@ class TuringMachine {
     writerSupport.position.set(-1.5, 6, 3.16)
     baseGroup.add(writerSupport)
 
+    const writerSecondSupport = new THREE.Mesh(
+      new THREE.BoxGeometry(2, 1, 1),
+      new THREE.MeshPhongMaterial({ color: 0x654321 })    
+    )
+
+    writerSecondSupport.position.set(0, 9.5, 2.2)
+    baseGroup.add(writerSecondSupport)
+
     const positionsX = [19, -19]
     const positionsZ = [2.65, 15.65]
     for (let i = 0; i < 2; i++) {
@@ -458,7 +466,7 @@ class TuringMachine {
     const geometry = new THREE.BoxGeometry(2, 1.5, 1.5)
     const material = new THREE.MeshPhongMaterial({ color: 0xff0000, emissive: 0x330000, shininess: 100 })
     this.head = new THREE.Mesh(geometry, material)
-    this.head.position.set(0, this.outerRadius, this.tapeThickness)
+    this.head.position.set(0, this.outerRadius + 2, this.tapeThickness+ 0.5)
     this.scene.add(this.head)
 
     // BRAZO DE ESCRITURA (servo con plumón)
@@ -489,7 +497,7 @@ class TuringMachine {
     armGroup.add(marker)
     
     // Posicionar el grupo más arriba
-    armGroup.position.set(-1.5, this.outerRadius + 5.5, this.tapeThickness-0.5)
+    armGroup.position.set(0, this.outerRadius + 5.5, this.tapeThickness-0.5)
     armGroup.rotation.x = Math.PI * 3 / 8
     this.scene.add(armGroup)
     this.writerArm = armGroup
@@ -520,7 +528,7 @@ class TuringMachine {
     sponge.position.set(0, -0.6, 0)
     eraserGroup.add(sponge)
     
-    eraserGroup.position.set(1.5, this.outerRadius+0.2, this.tapeThickness)
+    eraserGroup.position.set(0, this.outerRadius+0.2, this.tapeThickness)
     eraserGroup.rotation.x = Math.PI / 2
     this.scene.add(eraserGroup)
     this.eraserPiston = eraserGroup
