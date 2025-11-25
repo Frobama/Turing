@@ -770,6 +770,14 @@ class TuringMachine {
       cell.marks = []
       cell.symbol = BLANK
     }
+    // Resetear rotación del brazo de escritura a su posición inicial
+    if (this.writerArm) {
+      this.writerArm.rotation.x = Math.PI * 3 / 8
+    }
+    // Resetear posición Z del pistón de borrado a su posición inicial
+    if (this.eraserPiston) {
+      this.eraserPiston.position.z = this.tapeThickness
+    }
     this.updateTapePosition()
     this.updateHeadLook()
     updateStateDisplay('Listo')
@@ -875,6 +883,10 @@ window.addEventListener('pointermove', onPointerMove)
 document.getElementById('suma').addEventListener('click', async () => {
   const num1 = parseInt(document.getElementById('num1').value) || 0
   const num2 = parseInt(document.getElementById('num2').value) || 0
+  if(num1 + num2 > 34){
+    alert("La suma de los números no debe exceder 34.");
+    return;
+  }
   await turingMachine.reset()  // Esperar a que termine el reset antes de continuar
   await turingMachine.initializeTape(num1, num2, 'suma')
   turingMachine.run()
@@ -883,6 +895,14 @@ document.getElementById('suma').addEventListener('click', async () => {
 document.getElementById('resta').addEventListener('click', async () => {
   const num1 = parseInt(document.getElementById('num1').value) || 0
   const num2 = parseInt(document.getElementById('num2').value) || 0
+  if(num1 < num2){
+    alert("Para la resta, el primer número debe ser mayor o igual al segundo.");
+    return;
+  }
+  if (num1 - num2 > 34) {
+    alert("El resultado de la resta ni los números no deben exceder 34.");
+    return;
+  }
   await turingMachine.reset()  // Esperar a que termine el reset antes de continuar
   await turingMachine.initializeTape(num1, num2, 'resta')
   turingMachine.run()
