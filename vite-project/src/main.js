@@ -565,18 +565,7 @@ class TuringMachine {
     }
   }
 
-  resetWriterArm() {
-    // Resetear el brazo de escritura a su posición inicial
-    this.writerArm.position.set(-1.5, this.outerRadius + 5.5, this.tapeThickness - 0.5)
-    this.writerArm.rotation.x = Math.PI * 3 / 8
-    this.writerArm.rotation.y = 0
-    this.writerArm.rotation.z = 0
-  }
-
   async animateWriter() {
-    // Resetear el brazo antes de la animación
-    this.resetWriterArm()
-    
     // Rotar el brazo del plumón hacia la cinta
     const originalRotation = this.writerArm.rotation.x
     const targetRotation = originalRotation - Math.PI / 3 // Rotar 60 grados
@@ -595,21 +584,9 @@ class TuringMachine {
       this.writerArm.rotation.x = targetRotation + (originalRotation - targetRotation) * (i / 10)
       await this.sleep(20)
     }
-    
-    // Resetear nuevamente después de terminar la animación
-    this.resetWriterArm()
-  }
-
-  resetEraserPiston() {
-    // Resetear el pistón a su posición inicial
-    this.eraserPiston.position.set(1.5, this.outerRadius + 0.2, this.tapeThickness)
-    this.eraserPiston.rotation.x = Math.PI / 2
   }
 
   async animateEraser() {
-    // Resetear el pistón antes de la animación
-    this.resetEraserPiston()
-    
     // Bajar el pistón con la esponjita
     const originalZ = this.eraserPiston.position.z
     const targetZ = originalZ - 2.5
@@ -631,8 +608,6 @@ class TuringMachine {
         }
     }
     
-    // Resetear nuevamente después de terminar la animación
-    this.resetEraserPiston()
   }
 
   // CAMBIO: Geometría de la marca para que sea una línea vertical
@@ -775,12 +750,17 @@ class TuringMachine {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  reset() {
+  async reset() {
     this.isRunning = false
     this.currentState = 'q0'
     this.headPosition = Math.floor(this.tapeSize / 2) - 10
+    // Limpiar todas las celdas de forma síncrona (sin animaciones)
     for (let i = 0; i < this.tapeSize; i++) {
-      this.drawSymbol(i, BLANK)
+      const cell = this.tapeObjects[i]
+      // Limpiar marcas anteriores directamente
+      cell.marks.forEach(mark => cell.group.remove(mark))
+      cell.marks = []
+      cell.symbol = BLANK
     }
     this.updateTapePosition()
     this.updateHeadLook()
@@ -887,6 +867,7 @@ window.addEventListener('pointermove', onPointerMove)
 document.getElementById('suma').addEventListener('click', async () => {
   const num1 = parseInt(document.getElementById('num1').value) || 0
   const num2 = parseInt(document.getElementById('num2').value) || 0
+  await turingMachine.reset()  // Esperar a que termine el reset antes de continuar
   await turingMachine.initializeTape(num1, num2, 'suma')
   turingMachine.run()
 })
@@ -894,21 +875,16 @@ document.getElementById('suma').addEventListener('click', async () => {
 document.getElementById('resta').addEventListener('click', async () => {
   const num1 = parseInt(document.getElementById('num1').value) || 0
   const num2 = parseInt(document.getElementById('num2').value) || 0
-
-  if (num2 > num1) {
-    alert('Para la resta, el segundo número no puede ser mayor que el primero.')
-    return
-  }
-
+  await turingMachine.reset()  // Esperar a que termine el reset antes de continuar
   await turingMachine.initializeTape(num1, num2, 'resta')
   turingMachine.run()
 })
 
-document.getElementById('reset').addEventListener('click', () => {
-  turingMachine.reset()
+document.getElementById('reset').addEventListener('click', async () => {
+  await turingMachine.reset()
 })
 
-function updateStateDisplay(text) {
+function updateStateDisplay(text) { 
   document.getElementById('estado').textContent = `Estado: ${text}`
 }
 

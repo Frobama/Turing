@@ -1,4 +1,4 @@
-# Vitácora de Trabajo — Proyecto: <Máquina de Turing>
+# Bitácora de Trabajo — Proyecto: <Máquina de Turing>
 **Autor:** <Benjamín Rojas y Benjamín Torres>  
 **Periodo:** <31-08-2025> — <24-11-2025 >  
 **Versión:** 0.1
@@ -87,6 +87,17 @@
   - Testeo del código para sincronización de todos los componentes.
   - Implementación del sensor TCS34725 RGB
 - **Resultados/artefactos:** Se logró finalizar todo exceptuando el sensor, debido a que este experimentó un fallo interno que impidió el curso del proyecto de manera física, por lo que el equipo optó por finalizar la máquina de Turing de manera digital utilizando Three JS
+
+### 24-11-2025 Ajustes visuales y de lógica
+- **Duración:** 2h
+- **Autor:** Benjamín Rojas y Benjamín Torres.
+- **Objetivo del día:** Mejorar la interfaz gráfica de la simulación
+- **Actividades realizadas:**
+  - Adición de etiquetas con nombres a componentes
+  - Adición de modelos 3D de componentes de Arduino
+  - Mejora visual de ciertos componentes
+  - Ajuste a la lógica de reset de los botones
+- **Resultados/artefactos:** Se mejoró el aspecto visual de la simulación, y se arregló un problema con la lógica de los botones de suma y resta.
 
 
 ---
