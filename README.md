@@ -264,7 +264,7 @@ npm run preview   # Vista previa de compilación
 
 ## Autor
 
-Proyecto desarrollado para la asignatura de Fundamentos de la Computación en la UCN.
+Proyecto desarrollado por Benjamín Torres y Benjamín Rojas para la asignatura de Fundamentos de la Computación en la UCN.
 
 ## Licencia
 
