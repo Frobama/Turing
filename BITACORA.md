@@ -1,7 +1,7 @@
 # Bitácora de Trabajo — Proyecto: <Máquina de Turing>
-**Autor:** <Benjamín Rojas y Benjamín Torres>  
+**Autores:** <Benjamín Rojas y Benjamín Torres>  
 **Periodo:** <31-08-2025> — <24-11-2025 >  
-**Versión:** 0.1
+**Versión:** 1.0
 
 ---
 
@@ -40,7 +40,7 @@
 - **Objetivo del día:** Realizar la base del modelo en base al diagrama ilustrado en entregas anteriores y el código inicial.
 - **Actividades realizadas:**
   - Se creo la placa base en la que estaría la máquina de Turing.
-  - Se ensambló la torre con el brazo que sostendría el plumón para dibujar las líneas que representarían los 1s y 0s.
+  - Se ensambló la torre con el brazo que sostendría el plumón para dibujar las líneas que representarían los 1s, 0s y blancos.
   - Se generó el código prototipo que utilizaría la máquina.
   - Se armó el pistón que sostendría el borrador.
   - Se realizaron pruebas de movimiento conectando los componentes antedichos a un joystick. 
@@ -63,7 +63,7 @@
 - **Actividades realizadas:**
   - Creación y ensamblaje de los apoyos.
   - Medición y fabricación de la cinta.
-- **Resultados/artefactos:** Se logró otorgar estabilidad y altura a la máquina por medio de los apoyos y se ideó la cinta que portaría los 
+- **Resultados/artefactos:** Se logró otorgar estabilidad y altura a la máquina por medio de los apoyos y se ideó la cinta que portaría las marcas
 
 ### 12-11-2025 - Ensamblaje de los servos para la cinta
 - **Duración:** 3h
@@ -118,7 +118,7 @@
 - **Incidencia:** La cinta se mueve lateralmente debido al relieve de las perillas circulares del servo.
 - **Fecha:** 12-11-2025
 - **Impacto:** Dificultad en la rotación de la cinta.
-- **Acción tomada:** Se cambiaron la perillas por unas planas.
+- **Acción tomada:** Se cambiaron la perillas por otras sin relieve.
 - **Estado:** Resuelta
 
 
